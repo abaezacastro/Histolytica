@@ -12,9 +12,9 @@ require(pomp)
 #Skeleton of the model
 histolytica.sklt<- Csnippet("
 //dilution effect of rainfall on cyst concentration
-double v_E=vo + v_r * RR;
+double v_E=v0 + v_r * RR;
 //force of infection
-double foi=(beta_D * C_D + beta_E *(1 +  gamma * (RR/Rain_max))) * C_E));
+double foi=(beta_D * C_D) + beta_E *(1 +  gamma * (RR/Rain_max))* C_E;
 //calcualte transitions
 
 double rtfoi=  foi * S ;
@@ -25,7 +25,7 @@ double expdert = d * E;
 double infdert=d * I;
 double recrt= g*I;
 double recdr=d*R;
- double cyst_prt_E = cyst_pp * s * (1 - sigma) * I * dt;
+double cyst_prt_E = cyst_pp * s * (1 - sigma) * I * dt;
 double cyst_prt_D = cyst_pp * s * (sigma) * I * dt;
 double cyst_decay_E= v_E * C_E * dt;
 double cyst_decay_D= v0 * C_D * dt;
@@ -49,7 +49,7 @@ histolytica_rdpr<- Csnippet("
   //dilution effect of rainfall on cyst concentration
   double v_E=v0 + v_r * RR;
   //force of infection
- double foi=(beta_D * C_D + beta_E *(1 +  gamma * (RR/Rain_max))) * C_E)) *(dW/dt);
+ double foi=((beta_D * C_D) + beta_E *(1 +  gamma * (RR/Rain_max)) * C_E) *(dW/dt);
 
   //calcualte transitions
   
