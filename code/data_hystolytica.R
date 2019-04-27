@@ -3,7 +3,7 @@
 #require(dplyr)
 #require(plyr)
 #library(rts)
-#library(reshape2)
+
 
 #Create data frame to be use when creating the pomp object for histolytica 
 #read data
@@ -33,7 +33,8 @@ covartable_IZ <- data.frame(
 
 covartable_IZ$RR<-as.numeric(as.character(covartable_IZ$RR))
 
-
+max_rain=max(covartable_IZ$RR,na.rm=T)
 plot(dat_IZ$time,dat_IZ$Amebiasis,type="l",ylim=c(0,400))
 lines(covartable_IZ$time,covartable_IZ$RR)
+
 

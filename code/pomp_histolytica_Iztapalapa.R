@@ -12,25 +12,25 @@ require(pomp)
 #Skeleton of the model
 histolytica.sklt<- Csnippet("
 //dilution effect of rainfall on cyst concentration
-double v_E=v0 + v_r * RR;
+double v_E=v0 + v_r * (RR/Rain_max);
 //force of infection
-double foi=(beta_D * C_D) + beta_E *(1 +  gamma * (RR/Rain_max))* C_E;
+double foi=((beta_D * C_D) + beta_E * (1 +  gamma * pow (RR/Rain_max, alpha))) * C_E;
 //calcualte transitions
 
 double rtfoi=  foi * S ;
 double lostImrt = w * R ;
 double pgrt = d*(N - S);
-double infrt = del * E;
+double infrt = delta * E;
 double expdert = d * E;
 double infdert=d * I;
 double recrt= g*I;
 double recdr=d*R;
-double cyst_prt_E = cyst_pp * s * (1 - sigma) * I * dt;
-double cyst_prt_D = cyst_pp * s * (sigma) * I * dt;
-double cyst_decay_E= v_E * C_E * dt;
-double cyst_decay_D= v0 * C_D * dt;
+double cyst_prt_E = cyst_pp * s * (1 - sigma) * I;
+double cyst_prt_D = cyst_pp * s * (sigma) * I;
+double cyst_decay_E= v_E * C_E;
+double cyst_decay_D= v0 * C_D;
                             
-double rr_rt  =  rho * del * E; 
+double rr_rt  =  rho * delta * E; 
 
 // Calculate equation step
 DS =pgrt - rtfoi + lostImrt;
@@ -47,25 +47,25 @@ histolytica_rdpr<- Csnippet("
   // gamma white noise
   double dW = rgammawn(sigPRO,dt);
   //dilution effect of rainfall on cyst concentration
-  double v_E=v0 + v_r * RR;
+  double v_E=v0 + v_r * (RR/Rain_max);
   //force of infection
- double foi=((beta_D * C_D) + beta_E *(1 +  gamma * (RR/Rain_max)) * C_E) *(dW/dt);
+ double foi=((beta_D * C_D) + beta_E *(1 +  gamma * pow(RR/Rain_max,alpha)) * C_E) *(dW/dt);
 
   //calcualte transitions
   
   double rtfoi= foi * S *dt;
   double lostImrt = w * R * dt;
   double pgrt = d * (N - S) * dt;
-  double infrt = del * E * dt;
+  double infrt = delta * E * dt;
   double expdert = d * E * dt;
-  double infdert= d * I * dt;
-  double recrt= g * I * dt;
-  double recdr= d * R * dt;
+  double infdert = d * I * dt;
+  double recrt = g * I * dt;
+  double recdr = d * R * dt;
   double cyst_prt_E = cyst_pp * s * (1 - sigma) * I * dt;
   double cyst_prt_D = cyst_pp * s * (sigma) * I * dt;
-  double cyst_decay_E= v_E * C_E * dt;
-  double cyst_decay_D= v0 * C_D * dt;
-  double rr_rt  =  rho * del * E*dt;
+  double cyst_decay_E = v_E * C_E * dt;
+  double cyst_decay_D = v0 * C_D * dt;
+  double rr_rt  =  rho * delta * E * dt;
                             
   // Calculate equation step
      S += pgrt - rtfoi + lostImrt;
@@ -118,9 +118,9 @@ toEst <- Csnippet("
               Tbeta_D=log(beta_D);
               Tbeta_E =log(beta_E);
               Tgamma=log(gamma);
+              Tdelta=log(delta);
               Tv0  =log(v0);
               Tv_r  =log(v_r);
-              Ts=logit(s);
               Tsigma=logit(sigma);
               Tw=log(w);
               Tg=log(g);
@@ -131,11 +131,6 @@ toEst <- Csnippet("
               TC_E0=log(C_E0);
                   ")
 
-#Tp2_b  =log(p2_b);
-#Tp3_b  =log(p3_b);
-#Tdel =log(del);
-#Tcyst_pp=log(cyst_pp);
-#Tvo=log(vo);
 
 
 fromEst<-Csnippet("
@@ -145,9 +140,9 @@ fromEst<-Csnippet("
   Tbeta_D=exp(beta_D);
   Tbeta_E=exp(beta_E);
   Tgamma=exp(gamma);
-  Tv0  =exp(v0);
-  Tv_r  =exp(v_r);
-  Ts=expit(s);
+  Tdelta=exp(delta);
+  Tv0=exp(v0);
+  Tv_r=exp(v_r);
   Tsigma=expit(sigma);
   Tw=exp(w);
   Tg=exp(g);
@@ -157,9 +152,9 @@ fromEst<-Csnippet("
   TC_E0=exp(C_E0);
   TC_D0=exp(C_D0);
 ")
-rp_names <-c("sigPRO","rho","sigOBS","beta_E","beta_D","gamma","v0","v_r","s","sigma","w","g","del")
+rp_names <-c("sigPRO","rho","sigOBS","beta_E","beta_D","gamma","v0","v_r","sigma","w","g")
 ivp_names <-c("S_0","E_0","I_0","C_D0","C_E0")
-fp_names=c("d","N","cyst_pp","Rain_max")
+fp_names=c("d","delta","N","s","alpha","cyst_pp","Rain_max")
 
 ################################################################################
 histolytica_pomp_IZ <- pomp(data=dat_IZ,

@@ -1,15 +1,16 @@
 library(gridExtra)
 library(magrittr)
-
+require(ggplot2)
+library(reshape2)
 #simulate histolytica for Iztapalapa and plot time series
 #################################################
-sims <- simulate(histolytica_pomp_IZ,params=coef(pf),
+sims <- simulate(histolytica_pomp_IZ,params=coef(miff2_Iztapalapa),
                  nsim=1,as.data.frame=TRUE,include.data=TRUE)
 
-
+N_pop=fixed_params[2]
 png(filename = "single_simualtion_example_Iztapalapa.png",width = 12,height = 8,units = "cm",res = 100)
-plot.ts(dat$Amebiasis,ylab="cases Amebiasis")
-lines(sims$cases[85:168],col='red')
+plot.ts(dat_IZ$Amebiasis,ylab="cases Amebiasis")
+  lines(sims$cases[85:168],col='red')
 legend("topright",legend = c("data","simulation"),col = c("black","red"),lty=c(1,1))
 dev.off()
 
@@ -26,10 +27,12 @@ ggplot(sims,mapping=aes(y=Amebiasis,x=cases,color=sim))+
 
 trajectory_histolytica<-trajectory(histolytica_pomp_IZ,params=coef(miff2_Iztapalapa),as=TRUE)
 
-histolytica_pomp_IZ %>% as.data.frame() %>% 
-  melt(id="time") %>% ggplot(aes(x=time,y=value))+
+histolytica_pomp_IZ %>% 
+  as.data.frame() %>% 
+  melt(id="time") %>% 
+  ggplot(aes(x=time,y=value))+
   geom_line()+
-  geom_path(data=trajectory_histolytica,mapping=aes(x=time,y=cases))+
+  geom_path(data=trajectory_histolytica,mapping=aes(x=time,y=S))+
   facet_grid(variable~.,scales="free_y") 
 
 histolytica_pomp_IZ %>% as.data.frame() %>% 
@@ -39,14 +42,13 @@ histolytica_pomp_IZ %>% as.data.frame() %>%
 
 
 
-ggplot_msims
 
 
-sims <- simulate(histolytica_pomp_IZ,params=coef(pf),
+sims <- simulate(histolytica_pomp_IZ,params=coef(miff2_Iztapalapa),
                  nsim=1,as.data.frame=TRUE,include.data=TRUE)
 
 
-N_pop=fixed_params[2]
+
 
 
 gg_A<-ggplot(subset(sims,sim!="data"),mapping=aes(x=time,y=cases))+
@@ -78,9 +80,9 @@ gg_R<-ggplot(subset(sims,sim!="data"),mapping=aes(x=time,y=R/N_pop))+
   guides(color=FALSE)
 
 
-grid.arrange(ggplot_msims,gg_S, gg_E, gg_I,gg_R,gg_C,nrow = 3)
+grid.arrange(gg_S, gg_E, gg_I,gg_R,gg_C,nrow = 3)
 png(filename = "TS_hystolitica_model_outputData.png",width = 18,height = 20,units = "cm",res = 200)
-grid.arrange(ggplot_msims,gg_S, gg_E, gg_I,gg_R,gg_C,nrow = 3)
+grid.arrange(gg_S, gg_E, gg_I,gg_R,gg_C,nrow = 3)
 dev.off()
 
 png(filename = "prediction_vs_data.png",width = 18,height = 10,units = "cm",res = 200)
