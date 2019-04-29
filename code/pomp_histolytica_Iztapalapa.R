@@ -4,7 +4,6 @@
 ###########Files to create the pomp object###########
 #####################################################
 #load Pomp package
-require(pomp)
 ################################################
 #create snippets of  c++ code in R
 ################################################
@@ -23,23 +22,23 @@ double pgrt = d*(N - S);
 double infrt = delta * E;
 double expdert = d * E;
 double infdert=d * I;
-double recrt= g*I;
+double recovery_rate= g*I;
 double recdr=d*R;
-double cyst_prt_E = cyst_pp * s * (1 - sigma) * I;
-double cyst_prt_D = cyst_pp * s * (sigma) * I;
+double cyst_prt_E = cyst_pp * s * (1 - sigma) * I / N;
+double cyst_prt_D = cyst_pp * s * (sigma) * I / N;
 double cyst_decay_E= v_E * C_E;
 double cyst_decay_D= v0 * C_D;
                             
-double rr_rt  =  rho * delta * E; 
+double rr_rt  =  rho * infrt; 
 
 // Calculate equation step
 DS =pgrt - rtfoi + lostImrt;
 DE =rtfoi- expdert - infrt;
-DI =infrt-infdert-recrt;
-DR =recrt-recdr-lostImrt;
+DI =infrt-infdert-recovery_rate;
+DR =recovery_rate-recdr-lostImrt;
 DC_D =cyst_prt_D-cyst_decay_D;
 DC_E =cyst_prt_E-cyst_decay_E;
-Dcases =rr_rt;
+Dcases =rtfoi;
                             ")
 
 ##random_process
@@ -59,19 +58,19 @@ histolytica_rdpr<- Csnippet("
   double infrt = delta * E * dt;
   double expdert = d * E * dt;
   double infdert = d * I * dt;
-  double recrt = g * I * dt;
+  double recovery_rate = g * I * dt;
   double recdr = d * R * dt;
-  double cyst_prt_E = cyst_pp * s * (1 - sigma) * I * dt;
-  double cyst_prt_D = cyst_pp * s * (sigma) * I * dt;
+  double cyst_prt_E = cyst_pp * s * (1 - sigma) * (I/N) * dt;
+  double cyst_prt_D = cyst_pp * s * (sigma) * (I/N) * dt;
   double cyst_decay_E = v_E * C_E * dt;
   double cyst_decay_D = v0 * C_D * dt;
-  double rr_rt  =  rho * delta * E * dt;
+  double rr_rt  =  rho * infrt;
                             
   // Calculate equation step
      S += pgrt - rtfoi + lostImrt;
      E += rtfoi- expdert - infrt;
-     I += infrt-infdert-recrt;
-     R += recrt-recdr-lostImrt;
+     I += infrt-infdert-recovery_rate;
+     R += recovery_rate-recdr-lostImrt;
      C_E += cyst_prt_E-cyst_decay_E;
      C_D += cyst_prt_D-cyst_decay_D;
      cases += rr_rt; 
