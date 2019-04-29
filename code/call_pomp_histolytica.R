@@ -19,9 +19,21 @@ params <- c(sigPRO=0.01874, #noise
             g=4,
             w=1)
 
+
+
+
 ################################################################################
 #particle filter
 pf <- pfilter(histolytica_pomp_IZ,Np=1000,params=c(params,fixed_params),verbose=T)
+logLik(pf)
+plot(pf)
+
+
+#load object from previous search
+readRDS("histolitica_miff_output_Iztapalapa")
+################################################################################
+#particle filter
+pf <- pfilter(histolytica_pomp_IZ,Np=1000,params=coef(miff2_Iztapalapa),verbose=T)
 logLik(pf)
 plot(pf)
 
@@ -82,16 +94,4 @@ nb_mle <- optim(c(0,-5),nb_lik)
 ############################################################################################
 
 #saveRDS(object = miff2_Iztapalapa,file = "histolitica_miff_output_Iztapalapa")
-
-histolytica_pomp_IZ %>% 
-  simulate(params=coef(miff2_Iztapalapa),nsim=400,as.data.frame=TRUE,include.data=TRUE) %>%
-  subset(select=c(time,sim,Amebiasis)) %>%
-  mutate(data=sim=="data") %>%
-  ddply(~time+data,summarize,
-        p=c(0.1,0.5,0.9),q=quantile(Amebiasis,prob=p,names=FALSE,na.rm=T)) %>%
-  mutate(p=mapvalues(p,from=c(0.1,0.5,0.9),to=c("lo","med","hi")),
-         data=mapvalues(data,from=c(TRUE,FALSE),to=c("data","simulation"))) %>%
-  dcast(time+data~p,value.var='q') %>%
-  ggplot(aes(x=time,y=med,color=data,fill=data,ymin=lo,ymax=hi))+
-  geom_ribbon(alpha=I(0.2))+scale_fill_manual(values=c("green","black"), name="fill")->ggplot_msims
 
