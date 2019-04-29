@@ -1,24 +1,23 @@
 ################################################################################
-library(foreach)
+
 #Initial parameter values
-fixed_params<-c(d=0.001282,N=1.8E6, delta=0.1,s=0.9,alpha=1,cyst_pp=0.00027,Rain_max=max_rain)#3000000/1.8E 
+fixed_params<-c(d=0.017,N=1.8E6, delta=26,s=0.9,alpha=1,cyst_pp=0.4,Rain_max=max_rain)#3000000/1.8E 
 params <- c(sigPRO=0.01874, #noise
-            rho=0.03,#reporting rate
+            rho=0.01,#reporting rate
             sigOBS=0.17, #par noise
-            beta_D=0.00001,# probability of infection associated to the concentration of cysts in households
-            beta_E=0.01,# probability of infection associated to the concentration of cysts in the environtment
-            gamma=5, #the effect of rainfall
-            sigma=0.5,
-            v_r=0.1,
-            v0=0.01,
-            S_0=0.10,
+            beta_D=4,# probability of infection associated to the concentration of cysts in households
+            beta_E=5,# probability of infection associated to the concentration of cysts in the environtment
+            gamma=6, #the effect of rainfall
+            sigma=0.3,
+            v_r=2,
+            v0=4,
+            S_0=0.20,
             E_0=0.05,
-            I_0=0.6,
-            C_E0=2570, #concentration of pathogens in water. measure as number of cysts in a volume of water 
-            C_D0=2570,
-            g=0.007,
-            w=0.7
-)
+            I_0=0.4,
+            C_E0=0.05, #concentration of pathogens in water. measure as number of cysts in a volume of water 
+            C_D0=0.05,
+            g=4,
+            w=1)
 
 ################################################################################
 #particle filter
@@ -29,21 +28,22 @@ plot(pf)
 
 ################################################################################
 rdd<-rw.sd(sigPRO=0.0001,
-           rho=0.0001,
+           rho=0.001,
            sigOBS=0.0001,
-           beta_D=0.000001,
-           beta_E=0.000001,
-           gamma=0.001,
-           s=0.0001,
-           v_r=0.001,
-           v0=0.001,
-           w=0.00001,
-           g=0.00001,
-           S_0=ivp(0.0001),
-           E_0=ivp(0.0001),
-           I_0=ivp(0.0001),
-           C_D0=ivp(0.0001),
-           C_E0=ivp(0.0001)
+           beta_D=0.01,
+           beta_E=0.01,
+           gamma=0.01,
+           s=0.001,
+           sigma=0.01,
+           v_r=0.01,
+           v0=0.01,
+           w=0.001,
+           g=0.001,
+           S_0=ivp(0.001),
+           E_0=ivp(0.001),
+           I_0=ivp(0.001),
+           C_D0=ivp(0.001),
+           C_E0=ivp(0.001)
 )
 
 
@@ -61,6 +61,7 @@ miff_test<-mif2(histolytica_pomp_IZ,
 miff2_Iztapalapa<-continue(miff_test)
 
 ll<-numeric(30)
+
 for (i in 1:30){
   miff2_Iztapalapa<-mif2(miff2_Iztapalapa)
   ll[i]<-logLik(miff2_Iztapalapa)
@@ -81,14 +82,6 @@ nb_mle <- optim(c(0,-5),nb_lik)
 ############################################################################################
 
 #saveRDS(object = miff2_Iztapalapa,file = "histolitica_miff_output_Iztapalapa")
-#
-#miff2_Iztapalapa<-readRDS("histolitica_miff_output_Iztapalapa")
-pf <- pfilter(histolytica_pomp_IZ,Np=10000,params=coef(miff2_Iztapalapa),verbose=T)
-logLik(pf)
-
-pf <- pfilter(histolytica_pomp_IZ,Np=10000,params=coef(pf),verbose=T)
-logLik(pf)
-
 
 histolytica_pomp_IZ %>% 
   simulate(params=coef(miff2_Iztapalapa),nsim=400,as.data.frame=TRUE,include.data=TRUE) %>%
