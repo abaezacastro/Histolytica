@@ -34,7 +34,15 @@ covartable_IZ <- data.frame(
 covartable_IZ$RR<-as.numeric(as.character(covartable_IZ$RR))
 
 max_rain=max(covartable_IZ$RR,na.rm=T)
-plot(dat_IZ$time,dat_IZ$Amebiasis,type="l",ylim=c(0,400))
-lines(covartable_IZ$time,covartable_IZ$RR)
-
+png(filename = "hystolitica_casesRainfall_Iz.png",width = 18,height = 14,units = "cm",res = 200)
+par(mar=c(4,4,2,4)+1)
+plot(dat_IZ$time,dat_IZ$Amebiasis,type="o",ylim=c(0,400),col="red",pch=16,xlab="Time [years]",ylab="Cases")
+axis(2,col="red",col.axis="red")
+par(new=T)
+plot(covartable_IZ$time,covartable_IZ$RR,type="o",axes = FALSE, bty = "n", xlab = "", ylab = "",col="blue",pch=16)
+axis(side = 4,col="blue",col.axis="blue")
+mtext(side = 4, line = 3, 'Rainfall',col="blue",col.axis="blue",las=3)
+legend("topleft",legend=c("cases","rainfall"),
+       text.col=c("red","blue"),pch=c(16,16),col=c("red","blue"))
+dev.off()
 
