@@ -8,10 +8,11 @@ plot(sims$cases[85:168],type="l")
 plot(sims$S[85:168],type="l")
 plot(sims$E[85:168],type="l")
 plot(sims$R[85:168],type="l")
-plot(sims$C_D[85:168],type="l")
+plot(sims$C_D[85:168],type="l",ylim=c(0,0.1))
 lines(sims$C_E[85:168],col="blue")
 
-N_pop=fixed_params[2]
+
+N_pop=coef(miff2_Iztapalapa)[18]
 png(filename = "single_simualtion_example_Iztapalapa.png",width = 12,height = 8,units = "cm",res = 100)
 plot.ts(dat_IZ$Amebiasis,ylab="cases Amebiasis")
   lines(sims$cases[86:168],col='red')
@@ -20,7 +21,7 @@ dev.off()
 
 plot(dat_IZ$Amebiasis,sims$cases[85:168],ylim=c(0,300),xlim=c(0,300))
 abline(1,1)
-
+cor(dat_IZ$Amebiasis,sims$cases[85:168])
 png(filename = "predicted_vs_observed.png",width = 12,height = 8,units = "cm",res = 100)
 ggplot(sims,mapping=aes(y=Amebiasis,x=cases,color=sim))+
   geom_point(color="black")+
@@ -57,17 +58,7 @@ sims <- simulate(histolytica_pomp_IZ,params=coef(miff2_Iztapalapa),
 sims<-subset(sims,time>2005)
 
 
-gg_A<-ggplot(subset(sims,sim!="data"),mapping=aes(x=time,y=cases))+
-  geom_line(colour="grey",size=1)+
-  geom_line(subset(sims,sim=="data"),mapping=aes(x=time,y=Amebiasis),colour="black")+
-  guides(color=FALSE)+
-  theme_bw()
 
-
-gg_C<-ggplot(subset(sims,sim!="data"),mapping=aes(x=time,y=cases))+
-  geom_line(colour="grey",size=1)+
-  guides(color=FALSE)+
-  theme_bw()
 
 gg_S<-ggplot(subset(sims,sim!="data"),mapping=aes(x=time,y=S/N_pop))+
   geom_line(colour="grey",size=1)+
@@ -90,6 +81,14 @@ gg_I<-ggplot(subset(sims,sim!="data"),mapping=aes(x=time,y=I/N_pop))+
   theme_bw()+ 
   ylab("Infected") + 
   xlab("Time")
+
+gg_R<-ggplot(subset(sims,sim!="data"),mapping=aes(x=time,y=R/N_pop))+
+  geom_line(colour="grey",size=1)+
+  guides(color=FALSE)+
+  theme_bw()+ 
+  ylab("Recover") + 
+  xlab("Time")
+
 
 gg_CR<-ggplot(subset(sims,sim!="data"),mapping=aes(x=time,y=R/N_pop))+
   geom_line(colour="grey",size=1)+
