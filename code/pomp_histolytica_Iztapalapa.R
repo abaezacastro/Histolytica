@@ -18,7 +18,7 @@ double foi=((beta_D * C_D) + beta_E * (1 +  gamma * pow (RR/Rain_max, alpha))) *
 
 double rtfoi=  foi * S ;
 double lostImrt = w * R ;
-double pgrt = d*(N - S);
+double pgrt = b*N - d*S;
 double infrt = delta * E;
 double expdert = d * E;
 double infdert=d * I;
@@ -54,7 +54,7 @@ histolytica_rdpr<- Csnippet("
   
   double rtfoi= foi * S *dt;
   double lostImrt = w * R * dt;
-  double pgrt = d * (N - S) * dt;
+  double pgrt = (b * N - d*S) * dt;
   double infrt = delta * E * dt;
   double expdert = d * E * dt;
   double infdert = d * I * dt;
@@ -153,7 +153,7 @@ fromEst<-Csnippet("
 ")
 rp_names <-c("sigPRO","rho","sigOBS","beta_E","beta_D","gamma","v0","v_r","sigma","w","g")
 ivp_names <-c("S_0","E_0","I_0","C_D0","C_E0")
-fp_names=c("d","delta","N","s","alpha","cyst_pp","Rain_max")
+fp_names=c("b","d","delta","N","s","alpha","cyst_pp","Rain_max")
 
 ################################################################################
 histolytica_pomp_IZ <- pomp(data=dat_IZ,
