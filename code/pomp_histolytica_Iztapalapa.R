@@ -14,6 +14,9 @@ histolytica.sklt<- Csnippet("
 double v_E=v0 + v_r * (RR/Rain_max);
 //force of infection
 double foi=((beta_D * C_D) + beta_E * (1 +  gamma * pow (RR/Rain_max, alpha))) * C_E;
+
+//Population size
+int N=S+E+I+R;
 //calcualte transitions
 
 double rtfoi=  foi * S ;
@@ -48,9 +51,10 @@ histolytica_rdpr<- Csnippet("
   //dilution effect of rainfall on cyst concentration
   double v_E=v0 + v_r * (RR/Rain_max);
   //force of infection
- double foi=((beta_D * C_D) + beta_E *(1 +  gamma * pow(RR/Rain_max,alpha)) * C_E) *(dW/dt);
-
-  //calcualte transitions
+  double foi=((beta_D * C_D) + beta_E *(1 +  gamma * pow(RR/Rain_max, alpha)) * C_E) *(dW/dt);
+ //Population size
+  int N=S+E+I+R;
+//calcualte transitions
   
   double rtfoi= foi * S *dt;
   double lostImrt = w * R * dt;
@@ -100,10 +104,10 @@ dmeas <- Csnippet("
 ###########################################################################
 init <- Csnippet("
 
-  S = nearbyint(N*S_0);
-  E = nearbyint(N*E_0);
-  I = nearbyint(N*I_0);
-  R = nearbyint(N*(1-S_0-E_0-I_0));
+  S = nearbyint(N_0*S_0);
+  E = nearbyint(N_0*E_0);
+  I = nearbyint(N_0*I_0);
+  R = nearbyint(N_0*(1-S_0-E_0-I_0));
   C_D = C_D0;
   C_E = C_E0;
   cases=0;
@@ -117,6 +121,7 @@ toEst <- Csnippet("
               Tbeta_D=log(beta_D);
               Tbeta_E =log(beta_E);
               Tgamma=log(gamma);
+              Talpha=log(alpha);
               Tdelta=log(delta);
               Tv0  =log(v0);
               Tv_r  =log(v_r);
@@ -139,6 +144,7 @@ fromEst<-Csnippet("
   Tbeta_D=exp(beta_D);
   Tbeta_E=exp(beta_E);
   Tgamma=exp(gamma);
+  Talpha=exp(alpha);
   Tdelta=exp(delta);
   Tv0=exp(v0);
   Tv_r=exp(v_r);
@@ -151,9 +157,9 @@ fromEst<-Csnippet("
   TC_E0=exp(C_E0);
   TC_D0=exp(C_D0);
 ")
-rp_names <-c("sigPRO","rho","sigOBS","beta_E","beta_D","gamma","v0","v_r","sigma","w","g")
+rp_names <-c("sigPRO","rho","sigOBS","beta_E","beta_D","gamma","alpha","v0","v_r","sigma","w","g")
 ivp_names <-c("S_0","E_0","I_0","C_D0","C_E0")
-fp_names=c("b","d","delta","N","s","alpha","cyst_pp","Rain_max")
+fp_names=c("b","d","delta","N_0","s","cyst_pp","Rain_max")
 
 ################################################################################
 histolytica_pomp_IZ <- pomp(data=dat_IZ,
