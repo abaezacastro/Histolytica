@@ -1,7 +1,7 @@
 ################################################################################
 
 #Initial parameter values
-fixed_params<-c(b=0.0183,d=0.0058,N_0=1.8E6, delta=26,s=0.9,cyst_pp=0.4,Rain_max=max_rain)#3000000/1.8E 
+fixed_params<-c(b=0.0183,d=0.0058,N_0=1.8E6, delta=26,s=0.9,cyst_pp=0.4,Rain_max=max_rain_IZ)#3000000/1.8E 
 params <- c(sigPRO=0.01874, #noise
             rho=0.004,#reporting rate
             sigOBS=0.17, #par noise
@@ -25,7 +25,7 @@ params <- c(sigPRO=0.01874, #noise
 
 ################################################################################
 #particle filter
-pf <- pfilter(histolytica_pomp_IZ,Np=1000,params=c(params,fixed_params),verbose=T)
+pf <- pfilter(histolytica_pomp,Np=1000,params=c(params,fixed_params),verbose=T)
 logLik(pf)
 plot(pf)
 
@@ -40,25 +40,6 @@ plot(pf)
 
 
 ################################################################################
-rdd<-rw.sd(sigPRO=0.0001,
-           rho=0.001,
-           sigOBS=0.0001,
-           beta_D=0.01,
-           beta_E=0.01,
-           gamma=0.01,
-           s=0.001,
-           #alpha=ivp(0.00001),
-           sigma=0.01,
-           v_r=0.01,
-           v0=0.01,
-           w=0.001,
-           g=0.001,
-           S_0=ivp(0.01),
-           E_0=ivp(0.01),
-           I_0=ivp(0.01),
-           C_D0=ivp(0.01),
-           C_E0=ivp(0.01)
-)
 
 
 miff_test<-mif2(histolytica_pomp_IZ,

@@ -117,7 +117,29 @@ dcov$time<-seq(from=2005,to =2012-1/length(dcov$time) ,length.out=length(dcov$ti
 
 
 caovariable_MA=list(covartable_MA,zone=12,dcov)
+###################################################################################
+covartable_VC=subset(Rainfall_monthy,Municipality=="V.CARRANZA")[,c(1,4)]
 
+cov2<-data.frame(
+  time=seq.Date(as.Date("2001/1/1"),
+                as.Date("2014/12/31"),
+                by = 1),
+  RR=rain_station[[43]][[3]][-(1:31)]) # first part of the ts is 2000 #add data VS daily
+dcov=subset(cov2,time>as.Date("2004/12/31") & time < as.Date("2012/1/1"))
+dcov$time<-seq(from=2005,to =2012-1/length(dcov$time) ,length.out=length(dcov$time))
+
+caovariable_VC=list(covartable_VC,zone=15)
+######################################################################################
+m_rec_TLH<-readRDS("data/monthy_rainfall_TLAHUAC_stations")
+m_rec_TLH<-subset(m_rec_TLH,station_name==levels(m_rec_TLH$station_name)[3])
+
+covartable_TLH<- data.frame(
+  tt=m_rec_TLH$time[which(m_rec_TLH$time>=2005 & m_rec_TLH$time<2012)],
+  RR=m_rec_TLH$Mrain[which(m_rec_TLH$time>=2005 & m_rec_TLH$time<2012)]
+)
+covartable_TLH$RR<-as.numeric(as.character(covartable_TLH$RR))
+max_rain_TLH=max(covartable_TLH$RR,na.rm=T)
+caovariable_TLH=list(covartable_TLH,zone=13)
 ###################################################################################
 m_rec_XO<-readRDS("data/monthy_rainfall_XOCHIMILCO_stations")
 m_rec_XO<-subset(m_rec_XO,station_name==levels(m_rec_XO$station_name)[1])
@@ -135,11 +157,15 @@ m_rec_GM<-readRDS("data/monthy_rainfall_GAMadero_stations")
 m_rec_GM<-subset(m_rec_GM,station_name==levels(m_rec_GM$station_name)[1])
 
 covartable_GM <- data.frame(
-  time=m_rec_GM$time[which(m_rec_GM$time>=2005 & m_rec_GM$time<2012)],
+  tt=m_rec_GM$time[which(m_rec_GM$time>=2005 & m_rec_GM$time<2012)],
   RR=m_rec_GM$Mrain[which(m_rec_GM$time>=2005 & m_rec_GM$time<2012)]
 )
 covartable_GM$RR<-as.numeric(as.character(covartable_GM$RR))
 max_rain_GM=max(covartable_GM$RR,na.rm=T)
+
+covartable_GM=subset(Rainfall_monthy,Municipality=="G_madero")[,c(1,4)]
+
+
 caovariable_GM=list(covartable_GM,zone=7)
 
 
@@ -172,7 +198,7 @@ m_rec_CU<-readRDS("data/monthy_rainfall_CUAJIMALPA_stations")
 m_rec_CU<-subset(m_rec_CU,station_name==levels(m_rec_CU$station_name)[1])
 
 covartable_CU <- data.frame(
-  time=m_rec_CU$time[which(m_rec_CU$time>=2005 & m_rec_CU$time<2012)],
+  tt=m_rec_CU$time[which(m_rec_CU$time>=2005 & m_rec_CU$time<2012)],
   RR=m_rec_CU$Mrain[which(m_rec_CU$time>=2005 & m_rec_CU$time<2012)]
 )
 covartable_CU$RR<-as.numeric(as.character(covartable_CU$RR))
@@ -228,27 +254,6 @@ max_rain_MC=max(covartable_MC$RR,na.rm=T)
 caovariable_MC=list(covartable_MC,zone=10)
 ######################################################################################
 ###################################################################################
-m_rec_TLH<-readRDS("data/monthy_rainfall_TLAHUAC_stations")
-m_rec_TLH<-subset(m_rec_TLH,station_name==levels(m_rec_TLH$station_name)[1])
 
-covartable_TLH<- data.frame(
-  time=m_rec_TLH$time[which(m_rec_TLH$time>=2005 & m_rec_TLH$time<2012)],
-  RR=m_rec_TLH$Mrain[which(m_rec_TLH$time>=2005 & m_rec_TLH$time<2012)]
-)
-covartable_TLH$RR<-as.numeric(as.character(covartable_TLH$RR))
-max_rain_TLH=max(covartable_TLH$RR,na.rm=T)
-caovariable_TLH=list(covartable_TLH,zone=13)
-######################################################################################
-###################################################################################
-m_rec_VC<-readRDS("data/monthy_rainfall_VCARRANZA_stations")
-m_rec_VC<-subset(m_rec_VC,station_name==levels(m_rec_VC$station_name)[1])
-
-covartable_VC<- data.frame(
-  time=m_rec_VC$time[which(m_rec_VC$time>=2005 & m_rec_VC$time<2012)],
-  RR=m_rec_VC$Mrain[which(m_rec_VC$time>=2005 & m_rec_VC$time<2012)]
-)
-covartable_VC$RR<-as.numeric(as.character(covartable_VC$RR))
-max_rain_VC=max(covartable_VC$RR,na.rm=T)
-caovariable_VC=list(covartable_VC,zone=15)
 ######################################################################################
 

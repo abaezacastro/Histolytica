@@ -266,7 +266,7 @@ rdd_a<-rw.sd(sigma_process=0.0001,
              beta_E=0.01,
              gamma=0.01,
              alpha=0.1,
-             sigma=ivp(0.001),
+             sigma=0.001,
              v_r=0.001,
              v0=0.001,
              w=0.001,
@@ -274,8 +274,8 @@ rdd_a<-rw.sd(sigma_process=0.0001,
              S_0=ivp(0.01),
              E_0=ivp(0.01),
              I_0=ivp(0.01),
-             C_D0=0.001,
-             C_E0=0.001
+             C_D0=ivp(0.001),
+             C_E0=ivp(0.001)
 )
 
 
@@ -416,7 +416,7 @@ max_par=c(sigma_process=0.02, #noise
           C_D0=0.2)
          
 
-nsequ<-5  
+nsequ<-20  
 runifDesign(
   lower= min_par,#partrans(miff2,theta.t.lo,"toEst"),
   upper=max_par,#(miff2,theta.t.hi,"toEst"),
@@ -449,7 +449,7 @@ foreach (p=iterators::iter(pr_1,"row"),
     mif2(params=unlist(p),
          Nmif=15,
          Np=1000,
-         cooling.fraction.50=0.5,
+         cooling.fraction.50=0.1,
          cooling.type="geometric",
          rw.sd=rdd_c) %>%
     mif2() -> mf
@@ -473,7 +473,6 @@ pairs(~loglik+beta_E+gamma+v_r,data=random_designed_res)
 
 ###########################################################################
 #filter
-browser()
 random_designed_res %>%
   filter(rank(-loglik)<=5 & loglik< (-100)) %>%
   ungroup() %>%
